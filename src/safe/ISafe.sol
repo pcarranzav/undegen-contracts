@@ -1,0 +1,6 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.27;
+
+interface ISafe {
+    function execTransactionFromModule(address to, uint256 value, bytes memory data, uint8 operation) external returns (bool success);
+}
