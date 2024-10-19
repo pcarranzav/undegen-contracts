@@ -21,30 +21,15 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       accounts: {
-        mnemonic: 'myth like bonus scare over problem client lizard pioneer submit female collect',
+        mnemonic: 'divide throw butter hazard gauge alpha artwork artefact bike already draw panel',
       },
     },
-    unichainSepolia: {
-      url: 'https://sepolia.unichain.org',
+    baseSepolia: {
+      url: 'https://sepolia.base.org',
       accounts: {
         mnemonic: process.env.MNEMONIC ?? '',
       },
     },
-  },
-  etherscan: {
-    apiKey: {
-      arbitrumSepolia: process.env.ETHERSCAN_API_KEY ?? '',
-    },
-    customChains: [
-      {
-        network: 'arbitrumSepolia',
-        chainId: 421614,
-        urls: {
-          apiURL: 'https://api-sepolia.arbiscan.io/api',
-          browserURL: 'https://sepolia.arbiscan.io/',
-        },
-      },
-    ],
   },
 }
 
