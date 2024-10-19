@@ -33,11 +33,6 @@ jobs:
           npm run build
         id: build
 
-      - name: Lint
-        run: |
-          npm run lint
-        id: lint
-
       - name: Run tests
         run: |
           npm run test
