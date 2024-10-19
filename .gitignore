@@ -1,7 +1,3 @@
-# Compiler files
-cache/
-out/
-
 # Ignores development broadcast logs
 !/broadcast
 /broadcast/*/31337/
@@ -12,3 +8,51 @@ docs/
 
 # Dotenv file
 .env
+
+# Logs
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
+node_modules/
+
+# Yarn
+.yarn/
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+
+# Hardhat artifacts
+artifacts/
+cache/
+cached/
+
+# Build artifacts
+dist/
+build/
+typechain/
+typechain-types/
+deployments/hardhat/
+
+# Ignore solc bin output
+bin/
+
+# Others
+.DS_Store
+.vscode
+
+# Coverage and other reports
+reports/
+coverage.json
+
+# Keys
+.keystore
+
+# Forge artifacts
+cache_forge
+
+# Hardhat Ignition
+**/chain-31337/
+!**/ignition/**/artifacts/
