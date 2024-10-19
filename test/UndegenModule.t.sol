@@ -8,7 +8,8 @@ contract UndegenModuleTest is Test {
     UndegenModule public undegen;
 
     function setUp() public {
-        undegen = new UndegenModule();
+        address[] memory riskyAssets = new address[](1);
+        undegen = new UndegenModule(address(0), riskyAssets);
     }
 
     function test_noop() public {
