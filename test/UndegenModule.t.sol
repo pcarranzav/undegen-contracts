@@ -9,7 +9,8 @@ contract UndegenModuleTest is Test {
 
     function setUp() public {
         address[] memory riskyAssets = new address[](1);
-        undegen = new UndegenModule(address(0), riskyAssets);
+        address[] memory oracles = new address[](1);
+        undegen = new UndegenModule(address(0), riskyAssets, oracles);
     }
 
     function test_noop() public {

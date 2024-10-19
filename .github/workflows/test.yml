@@ -29,9 +29,9 @@ jobs:
           version: nightly
 
       - name: npm install
-          run: |
-            npm install
-          id: npmi
+        run: |
+          npm install
+        id: npmi
 
       - name: Run build
         run: |

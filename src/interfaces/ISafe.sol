@@ -9,4 +9,5 @@ interface ISafe {
         bytes memory data,
         uint8 operation
     ) external returns (bool success, bytes memory returnData);
+    function isOwner(address owner) external view returns (bool);
 }
