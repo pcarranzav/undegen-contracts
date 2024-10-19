@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.27;
 
-import { IModuleManager } from "./safe/IModuleManager.sol";
+interface ISafe {
+    function execTransactionFromModule(address to, uint256 value, bytes memory data, uint8 operation) external returns (bool success);
+}
 
 contract UndegenModule {
     
