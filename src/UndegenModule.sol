@@ -6,6 +6,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IHyperdrive} from "hyperdrive/contracts/src/interfaces/IHyperdrive.sol";
 import {IHyperdriveCore} from "hyperdrive/contracts/src/interfaces/IHyperdriveCore.sol";
 import {IUndegenRebalancer} from "./interfaces/IUndegenRebalancer.sol";
+import {IChronicle} from "chronicle-std/IChronicle.sol";
 
 contract UndegenModule {
     event UndegenModuleCreated(
@@ -80,9 +81,6 @@ contract UndegenModule {
     }
 
     function _getPriceFromChronicle(address _oracle) internal returns (uint256) {
-        // TODO
-        // Use Chronicle oracle to get the price of the asset
-
-        return 9000;
+        return IChronicle(_oracle).read();
     }
 }
