@@ -15,7 +15,7 @@ contract UndegenModuleTest is Test {
         address[] memory riskyAssets = new address[](1);
         address[] memory oracles = new address[](1);
         safe = new MockSafe();
-        undegenRebalancer = new UndegenRebalancer(address(0), address(0));
+        undegenRebalancer = new UndegenRebalancer(address(0), address(0), address(0));
         undegenModule = new UndegenModule(riskyAssets, oracles, address(0), address(undegenRebalancer));
     }
 

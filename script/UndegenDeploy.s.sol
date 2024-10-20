@@ -7,6 +7,7 @@ import {UndegenModule} from "../src/UndegenModule.sol";
 
 contract UndegenDeploy is Script {
     address constant hyperdrivePool = 0xD5D9556052dB810Da774BeC127cd2aFF548a6571;
+    address constant swapRouter = 0x94cC0AaC535CCDB3C01d6787D6413C739ae12bc4;
     address constant usdc = 0x036CbD53842c5426634e7929541eC2318f3dCF7e;
     address constant wbtc = 0x83c84Ad6614E8e6e31D2e7A8FbeD660b90c06a79; // QuestSwap
     address constant wsteth = 0xB2F2366FF8aA4DfCcb07603cD69D0D7a84feA689; // QuestSwap2
@@ -21,7 +22,7 @@ contract UndegenDeploy is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        UndegenRebalancer undegenRebalancer = new UndegenRebalancer(hyperdrivePool, usdc);
+        UndegenRebalancer undegenRebalancer = new UndegenRebalancer(hyperdrivePool, usdc, swapRouter);
         console.log("UndegenRebalancer deployed at:", address(undegenRebalancer));
 
         address[] memory riskyAssets = new address[](2);

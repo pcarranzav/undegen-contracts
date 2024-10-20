@@ -13,7 +13,7 @@ import {IUndegenRebalancer} from "./interfaces/IUndegenRebalancer.sol";
  * for a set of risky assets, putting the rest in a Hyperdrive long.
  */
 contract UndegenRebalancer is IUndegenRebalancer {
-    event UndegenRebalancerCreated(address hyperdrivePool, address usdc);
+    event UndegenRebalancerCreated(address hyperdrivePool, address usdc, address swapRouter);
     event LongClosed(uint256 maturityTime, uint256 bondAmount, uint256 proceeds);
     event LongOpened(uint256 amount, uint256 maturityTime, uint256 bondProceeds);
 
@@ -24,10 +24,11 @@ contract UndegenRebalancer is IUndegenRebalancer {
     IHyperdrive public immutable hyperdrivePool;
     ISwapRouter public immutable swapRouter;
 
-    constructor(address _hyperdrivePool, address _usdc) {
+    constructor(address _hyperdrivePool, address _usdc, address _swapRouter) {
         hyperdrivePool = IHyperdrive(_hyperdrivePool);
+        swapRouter = ISwapRouter(_swapRouter);
         usdc = _usdc;
-        emit UndegenRebalancerCreated(_hyperdrivePool, _usdc);
+        emit UndegenRebalancerCreated(_hyperdrivePool, _usdc, _swapRouter);
     }
 
     function rebalance(RebalanceOperation memory _args) external override returns (RebalanceReturn memory) {

@@ -15,4 +15,4 @@ sepolia = "${SEPOLIA_RPC_URL}"
 
 [etherscan]
 sepolia = { key = "$ETHERSCAN_API_KEY" }
-84532 = { key = "$BASESCAN_API_KEY", url = "https://sepolia.basescan.org" }
+84532 = { key = "$BASESCAN_API_KEY", url = "https://api-sepolia.basescan.org/api" }
