@@ -1,66 +1,49 @@
-## Foundry
+## Undegen Smart Contracts
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+Built at EthGlobal SF 2024.
 
-Foundry consists of:
+**Undegen is a personal finance tools that uses finance research (Merton's portfolio problem) to help investors establish an optimal portfolio tuned to their risk-aversion.**
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+It was inspired by the book "The Missing Billionares" by James White and Victor Haghani.
 
-## Documentation
+# Architecture
 
-https://book.getfoundry.sh/
+The Undegen protocol is based on the user's assets being in a Gnosis Safe.
+The UndegenModule has to be added as a module to the Safe.
+
+The user transfers a certain amount of USDC to the Safe, and
+initiates a transaction on the Safe that calls the UndegenModule's rebalance() function.
+
+The UndegenModule will then call back into the Safe (where it is allowed to execute transactions, as it is a Safe Module), doing a delegatecall to the UndegenRebalancer contract that executes the necessary actions to rebalance the portfolio.
+
+This architecture allows the rebalancing to happen without the need for any explicit approvals. The flow is still user-initiated, as the transaction to execute the rebalancing has to be executed by the Safe. The user transaction specifies the amount of each risky asset to hold, in USD, and the rest will be deposited into a long position on a USDC fixed-rate pool on [Hyperdrive](https://hyperdrive.box).
+
+The contract uses [Chronicle](https://chroniclelabs.org) oracles to convert between token prices and USD.
 
 ## Usage
+
+The project uses both Hardhat and Foundry for convenience.
 
 ### Build
 
 ```shell
-$ forge build
+$ npm run build
 ```
 
 ### Test
 
 ```shell
-$ forge test
+$ npm run test
 ```
 
 ### Format
 
 ```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
+$ npm run lint
 ```
 
 ### Deploy
 
 ```shell
 $ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
 ```

@@ -3,7 +3,6 @@ pragma solidity ^0.8.27;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IHyperdrive} from "hyperdrive/contracts/src/interfaces/IHyperdrive.sol";
-import {IHyperdriveCore} from "hyperdrive/contracts/src/interfaces/IHyperdriveCore.sol";
 
 import {IUndegenRebalancer} from "./interfaces/IUndegenRebalancer.sol";
 
@@ -14,7 +13,6 @@ import {IUndegenRebalancer} from "./interfaces/IUndegenRebalancer.sol";
  * for a set of risky assets, putting the rest in a Hyperdrive long.
  */
 contract UndegenRebalancer is IUndegenRebalancer {
-
     event UndegenRebalancerCreated(address hyperdrivePool, address usdc);
     event LongClosed(uint256 maturityTime, uint256 bondAmount, uint256 proceeds);
     event LongOpened(uint256 amount, uint256 maturityTime, uint256 bondProceeds);
@@ -22,20 +20,18 @@ contract UndegenRebalancer is IUndegenRebalancer {
     uint256 constant MAX_PPM = 1000000;
     address constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     address immutable usdc;
-    IHyperdriveCore immutable hyperdrivePool;
+    
+    IHyperdrive immutable hyperdrivePool;
 
     constructor(address _hyperdrivePool, address _usdc) {
-        hyperdrivePool = IHyperdriveCore(_hyperdrivePool);
+        hyperdrivePool = IHyperdrive(_hyperdrivePool);
         usdc = _usdc;
         emit UndegenRebalancerCreated(_hyperdrivePool, _usdc);
     }
 
     function rebalance(RebalanceOperation memory _args) external override returns (RebalanceReturn memory) {
-        RebalanceReturn memory ret = RebalanceReturn({
-            bondProceeds: 0,
-            bondMaturity: _args.bondMaturity,
-            bondAmount: _args.bondAmount
-        });
+        RebalanceReturn memory ret =
+            RebalanceReturn({bondProceeds: 0, bondMaturity: _args.bondMaturity, bondAmount: _args.bondAmount});
         if (_args.bondMaturity != 0) {
             ret.bondProceeds = _closeLong(_args.bondMaturity, _args.bondAmount);
             ret.bondMaturity = 0;
@@ -43,8 +39,8 @@ contract UndegenRebalancer is IUndegenRebalancer {
         }
 
         uint256[] memory currentAmounts = new uint256[](_args.riskyAssets.length);
-        for (uint i = 0; i < _args.riskyAssets.length; i++) {
-            currentAmounts[i] = _getAmountFromChronicle(i);
+        for (uint256 i = 0; i < _args.riskyAssets.length; i++) {
+            currentAmounts[i] = IERC20(_args.riskyAssets[i]).balanceOf(address(this)) * _args.assetPrices[i];
 
             // If the current amount is more than the target by more than the max deviation
             // we need to sell
@@ -54,7 +50,7 @@ contract UndegenRebalancer is IUndegenRebalancer {
             }
         }
         // TODO: Buy ETH needed to cover the difference
-        for (uint i = 0; i < _args.riskyAssets.length; i++) {
+        for (uint256 i = 0; i < _args.riskyAssets.length; i++) {
             // If the current amount is less than the target by more than the max deviation
             // we need to buy
             if (currentAmounts[i] < _args.riskyAssetUSDAmounts[i] * (MAX_PPM - _args.maxDeviationPPM) / MAX_PPM) {
@@ -75,11 +71,8 @@ contract UndegenRebalancer is IUndegenRebalancer {
     }
 
     function _closeLong(uint256 _bondMaturity, uint256 _bondAmount) internal returns (uint256) {
-        IHyperdrive.Options memory hyperdriveOpts = IHyperdrive.Options({
-            destination: address(this),
-            asBase: false,
-            extraData: ""
-        });
+        IHyperdrive.Options memory hyperdriveOpts =
+            IHyperdrive.Options({destination: address(this), asBase: false, extraData: ""});
         // TODO: check the minimum output
         uint256 proceeds = hyperdrivePool.closeLong(_bondMaturity, _bondAmount, 0, hyperdriveOpts);
         emit LongClosed(_bondMaturity, _bondAmount, proceeds);
@@ -87,26 +80,19 @@ contract UndegenRebalancer is IUndegenRebalancer {
     }
 
     function _openLong(uint256 _amount) internal returns (uint256, uint256) {
-        IHyperdrive.Options memory hyperdriveOpts = IHyperdrive.Options({
-            destination: address(this),
-            asBase: false,
-            extraData: ""
-        });
+        IHyperdrive.Options memory hyperdriveOpts =
+            IHyperdrive.Options({destination: address(this), asBase: false, extraData: ""});
         // Approve the pool to spend the USDC
         IERC20(usdc).approve(address(hyperdrivePool), _amount);
-        // TODO: check the minimum output and share price
-        (uint256 maturityTime, uint256 bondProceeds) = hyperdrivePool.openLong(_amount, 0, 0, hyperdriveOpts);
+
+        (uint256 maturityTime, uint256 bondProceeds) = hyperdrivePool.openLong(
+            _amount,
+            _amount,
+            0, // TODO: add negative interest guard
+            hyperdriveOpts
+        );
         emit LongOpened(_amount, maturityTime, bondProceeds);
         return (maturityTime, bondProceeds);
-    }
-
-    function _getAmountFromChronicle(uint256 i) internal returns (uint256) {
-        // TODO
-        // Use Chronicle oracle to get the price of the asset
-
-        // Then use the balance of that asset and the price to convert to a USD amount
-        
-        return 9000;
     }
 
     function _swap(address _from, address _to, uint256 _amountUSD) internal {
