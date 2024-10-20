@@ -59,3 +59,9 @@ $ npm run lint
 ```shell
 $ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
 ```
+
+## Deployments
+
+UndegenRebalancer: https://sepolia.basescan.org/address/0xD4fD69c36B37F023Ec8338B83b4ae3b6913b3c10#code
+
+UndegenModule: https://sepolia.basescan.org/address/0x5186c4c1E7873408378C0E72BF2c8B7580BAfa03#code
