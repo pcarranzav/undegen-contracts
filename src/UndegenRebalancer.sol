@@ -3,7 +3,7 @@ pragma solidity ^0.8.27;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IHyperdrive} from "hyperdrive/contracts/src/interfaces/IHyperdrive.sol";
-
+import {ISwapRouter} from "./interfaces/ISwapRouter.sol";
 import {IUndegenRebalancer} from "./interfaces/IUndegenRebalancer.sol";
 
 /**
@@ -21,7 +21,8 @@ contract UndegenRebalancer is IUndegenRebalancer {
     address constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     address immutable usdc;
 
-    IHyperdrive immutable hyperdrivePool;
+    IHyperdrive public immutable hyperdrivePool;
+    ISwapRouter public immutable swapRouter;
 
     constructor(address _hyperdrivePool, address _usdc) {
         hyperdrivePool = IHyperdrive(_hyperdrivePool);
@@ -119,7 +120,27 @@ contract UndegenRebalancer is IUndegenRebalancer {
     }
 
     function _swap(address _from, address _to, uint256 _amountIn) internal {
-        // TODO
         // Use Uniswap to swap the assets
+        // https://github.com/delvtech/hyperdrive/blob/e1880a8e341dca44150dc2b1ae0cb99978f66f99/contracts/src/zaps/UniV3Zap.sol#L806
+        // (Many thanks to Alex from the Hyperdrive team!)
+        uint256 value;
+        if (_from == ETH) {
+            value = _amountIn;
+        } else {
+            IERC20(_from).approve(address(swapRouter), _amountIn);
+        }
+        // TODO: add slippage protection based on the oracle prices
+        ISwapRouter.ExactInputSingleParams memory params =
+            ISwapRouter.ExactInputSingleParams({
+                tokenIn: _from,
+                tokenOut: _to,
+                fee: 3000,
+                recipient: address(this),
+                deadline: block.timestamp + 1,
+                amountIn: _amountIn,
+                amountOutMinimum: 0,
+                sqrtPriceLimitX96: 0
+            });
+        swapRouter.exactInputSingle{ value: value }(params);
     }
 }

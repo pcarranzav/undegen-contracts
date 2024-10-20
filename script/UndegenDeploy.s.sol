@@ -21,9 +21,7 @@ contract UndegenDeploy is Script {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
 
-        UndegenRebalancer undegenRebalancer = new UndegenRebalancer(
-            hyperdrivePool, usdc
-        );
+        UndegenRebalancer undegenRebalancer = new UndegenRebalancer(hyperdrivePool, usdc);
         console.log("UndegenRebalancer deployed at:", address(undegenRebalancer));
 
         address[] memory riskyAssets = new address[](2);
@@ -34,12 +32,8 @@ contract UndegenDeploy is Script {
         chronicleOracles[0] = wbtcOracle;
         chronicleOracles[1] = wstethOracle;
 
-        UndegenModule undegenModule = new UndegenModule(
-            riskyAssets,
-            chronicleOracles,
-            ethOracle,
-            address(undegenRebalancer)
-        );
+        UndegenModule undegenModule =
+            new UndegenModule(riskyAssets, chronicleOracles, ethOracle, address(undegenRebalancer));
         console.log("UndegenModule deployed at:", address(undegenModule));
 
         vm.stopBroadcast();
