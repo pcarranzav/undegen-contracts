@@ -45,22 +45,44 @@ contract UndegenRebalancer is IUndegenRebalancer {
             // If the current amount is more than the target by more than the max deviation
             // we need to sell
             if (currentAmounts[i] > _args.riskyAssetUSDAmounts[i] * (MAX_PPM + _args.maxDeviationPPM) / MAX_PPM) {
+                // Calculate the amount of the asset to sell based on the price
+                uint256 amountToSell = (currentAmounts[i] - _args.riskyAssetUSDAmounts[i]) * 1e18 / _args.assetPrices[i];
                 // Sell the difference
-                _swap(_args.riskyAssets[i], ETH, currentAmounts[i] - _args.riskyAssetUSDAmounts[i]);
+                _swap(_args.riskyAssets[i], ETH, amountToSell);
             }
         }
-        // TODO: Buy ETH needed to cover the difference
+        uint256 ethBalance = address(this).balance;
+        uint256 neededEth = 0;
         for (uint256 i = 0; i < _args.riskyAssets.length; i++) {
             // If the current amount is less than the target by more than the max deviation
             // we need to buy
             if (currentAmounts[i] < _args.riskyAssetUSDAmounts[i] * (MAX_PPM - _args.maxDeviationPPM) / MAX_PPM) {
                 // Buy the difference
-                _swap(ETH, _args.riskyAssets[i], _args.riskyAssetUSDAmounts[i] - currentAmounts[i]);
+                neededEth = (_args.riskyAssetUSDAmounts[i] - currentAmounts[i]) * 1e18 / _args.assetPrices[i];
+            }
+        }
+        // Add a 10% margin to the needed eth
+        neededEth = neededEth * 11 / 10;
+        if (ethBalance < neededEth) {
+            // Calculate the amount of usdc to sell to get the needed eth
+            uint256 amountToSell = (neededEth - ethBalance) * 1e18 / _args.ethPrice;
+            // Swap usdc for the needed eth
+            _swap(usdc, ETH, amountToSell);
+        }
+
+        for (uint256 i = 0; i < _args.riskyAssets.length; i++) {
+            // If the current amount is less than the target by more than the max deviation
+            // we need to buy
+            if (currentAmounts[i] < _args.riskyAssetUSDAmounts[i] * (MAX_PPM - _args.maxDeviationPPM) / MAX_PPM) {
+                // Calculate the amount of eth to sell to get the needed amount of the asset
+                uint256 amountToSell = (_args.riskyAssetUSDAmounts[i] - currentAmounts[i]) * 1e18 / _args.ethPrice;
+                // Buy the difference
+                _swap(ETH, _args.riskyAssets[i], amountToSell);
             }
         }
 
-        // Swap all ETH for USDC
-        _swapAll(ETH, usdc);
+        // Swap all remaining ETH for USDC
+        _swap(ETH, usdc, address(this).balance);
 
         uint256 totalAmount = IERC20(usdc).balanceOf(address(this));
         if (totalAmount > _args.minLongDeposit) {
