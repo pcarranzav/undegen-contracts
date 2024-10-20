@@ -1,4 +1,4 @@
-## Undegen Smart Contracts
+# Undegen Smart Contracts
 
 Built at EthGlobal SF 2024.
 
@@ -6,7 +6,11 @@ Built at EthGlobal SF 2024.
 
 It was inspired by the book "The Missing Billionares" by James White and Victor Haghani.
 
-# Architecture
+## UI repo
+
+The repo for the app is available at https://github.com/IainM22/eth-hack-ui
+
+## Architecture
 
 The Undegen protocol relies on the user's assets being in a Gnosis Safe.
 The UndegenModule has to be added as a module to the Safe.
