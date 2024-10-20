@@ -1,9 +1,15 @@
 name: test
 
-on: workflow_dispatch
+on:
+  push:
+    branches: "main"
+  pull_request:
+    branches: "*"
+  workflow_dispatch:
 
 env:
   FOUNDRY_PROFILE: ci
+  CI: true
 
 jobs:
   check:
@@ -22,13 +28,17 @@ jobs:
         with:
           version: nightly
 
-      - name: Run Forge build
+      - name: npm install
         run: |
-          forge --version
-          forge build --sizes
+          npm install
+        id: npmi
+
+      - name: Run build
+        run: |
+          npm run build
         id: build
 
-      - name: Run Forge tests
+      - name: Run tests
         run: |
-          forge test -vvv
+          npm run test
         id: test
