@@ -46,11 +46,11 @@ contract UndegenModule {
         // the long would have a positive return.
         require(bondMaturity < block.timestamp, UndegenModuleBondNotMatured());
 
-        uint256 ethPrice = 0;// _getPriceFromChronicle(ethOracle);
+        uint256 ethPrice = _getPriceFromChronicle(ethOracle);
         uint256[] memory assetPrices = new uint256[](riskyAssets.length);
-        // for (uint256 i = 0; i < riskyAssets.length; i++) {
-        //     assetPrices[i] = _getPriceFromChronicle(chronicleOracles[i]);
-        // }
+        for (uint256 i = 0; i < riskyAssets.length; i++) {
+            assetPrices[i] = _getPriceFromChronicle(chronicleOracles[i]);
+        }
         IUndegenRebalancer.RebalanceOperation memory rebalanceOperation = IUndegenRebalancer.RebalanceOperation({
             riskyAssetUSDAmounts: _riskyAssetUSDAmounts,
             riskyAssets: riskyAssets,

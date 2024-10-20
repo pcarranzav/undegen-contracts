@@ -32,7 +32,7 @@ contract UndegenRebalancer is IUndegenRebalancer {
     function rebalance(RebalanceOperation memory _args) external override returns (RebalanceReturn memory) {
         RebalanceReturn memory ret =
             RebalanceReturn({bondProceeds: 0, bondMaturity: _args.bondMaturity, bondAmount: _args.bondAmount});
-        return ret;
+
         if (_args.bondMaturity != 0) {
             ret.bondProceeds = _closeLong(_args.bondMaturity, _args.bondAmount);
             ret.bondMaturity = 0;
@@ -118,13 +118,8 @@ contract UndegenRebalancer is IUndegenRebalancer {
         return (maturityTime, bondProceeds);
     }
 
-    function _swap(address _from, address _to, uint256 _amountUSD) internal {
+    function _swap(address _from, address _to, uint256 _amountIn) internal {
         // TODO
         // Use Uniswap to swap the assets
-    }
-
-    function _swapAll(address _from, address _to) internal {
-        // TODO
-        // Use Uniswap to swap all the assets
     }
 }
