@@ -85,7 +85,9 @@ contract UndegenRebalancer is IUndegenRebalancer {
         }
 
         // Swap all remaining ETH for USDC
-        _swap(ETH, usdc, address(this).balance);
+        if (address(this).balance != 0) {
+            _swap(ETH, usdc, address(this).balance);
+        }
 
         uint256 totalAmount = IERC20(usdc).balanceOf(address(this));
         if (totalAmount > _args.minLongDeposit) {

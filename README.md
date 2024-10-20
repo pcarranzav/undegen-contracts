@@ -66,6 +66,6 @@ $ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --pri
 
 ## Deployments
 
-UndegenRebalancer: https://sepolia.basescan.org/address/0xD4fD69c36B37F023Ec8338B83b4ae3b6913b3c10#code
+UndegenRebalancer: https://sepolia.basescan.org/address/0xbf597A4554c4571aF65ABBB900E77283E32b51bc#code
 
-UndegenModule: https://sepolia.basescan.org/address/0x5186c4c1E7873408378C0E72BF2c8B7580BAfa03#code
+UndegenModule: https://sepolia.basescan.org/address/0x2C7f981c393e203790ba1cB33B9be6E9F81731ad#code
