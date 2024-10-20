@@ -8,7 +8,9 @@ import {IHyperdriveCore} from "hyperdrive/contracts/src/interfaces/IHyperdriveCo
 import {IUndegenRebalancer} from "./interfaces/IUndegenRebalancer.sol";
 
 contract UndegenModule {
-    event UndegenModuleCreated(address[] riskyAssets, address[] chronicleOracles, address ethOracle, address rebalancer);
+    event UndegenModuleCreated(
+        address[] riskyAssets, address[] chronicleOracles, address ethOracle, address rebalancer
+    );
     event Rebalanced(address safe, uint256 bondProceeds, uint256 bondMaturity, uint256 bondAmount);
 
     error UndegenModuleBondNotMatured();
@@ -20,7 +22,12 @@ contract UndegenModule {
     address rebalancer;
     address immutable ethOracle;
 
-    constructor(address[] memory _riskyAssets, address[] memory _chronicleOracles, address _ethOracle, address _rebalancer) {
+    constructor(
+        address[] memory _riskyAssets,
+        address[] memory _chronicleOracles,
+        address _ethOracle,
+        address _rebalancer
+    ) {
         riskyAssets = _riskyAssets;
         chronicleOracles = _chronicleOracles;
         rebalancer = _rebalancer;

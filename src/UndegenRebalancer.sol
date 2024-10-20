@@ -20,7 +20,7 @@ contract UndegenRebalancer is IUndegenRebalancer {
     uint256 constant MAX_PPM = 1000000;
     address constant ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     address immutable usdc;
-    
+
     IHyperdrive immutable hyperdrivePool;
 
     constructor(address _hyperdrivePool, address _usdc) {
